@@ -1,0 +1,83 @@
+{
+  "country": "chad",
+  "campaign_id": "CMP-2026-05-29-000091",
+  "campaign_name": "nOPV2 SIA N'Djamena June 2026",
+  "district": "7ème Arrondissement (DS7)",
+  "target_children": 228156,
+
+  "indices": {
+    "tasks": "chad-project-task-index-v1",
+    "beneficiaries": "chad-project-beneficiary-index-v1",
+    "households": "chad-household-index-v1",
+    "actions": "chad-user-action-location-capture-index-v1"
+  },
+
+  "gps_bounds": {
+    "lat_min": 11,
+    "lat_max": 14,
+    "lon_min": 13,
+    "lon_max": 17
+  },
+
+  "inactive_threshold_hours": 24,
+
+  "facility_prefix_map": {
+    "CS ABENA": "AB",
+    "CS AL-MANSOUR": "AL",
+    "CS AMBATTA 1": "AM1",
+    "CS AMBATTA 2": "AM2",
+    "CS AMBATTA 3 EDEN": "AM3",
+    "CS AMBATTA 4 LA ROSEE": "AM4",
+    "CS ATRONE": "AT",
+    "CS BOUTALBAGARA 1": "BO1",
+    "CS BOUTALBAGARA 2": "BO2",
+    "CS BOUTALBAGARA 3": "BO3",
+    "CS BOUTALBAGARA HENRY": "BOH",
+    "CS CEPHAS": "CF",
+    "CS DIGO": "DI",
+    "CS EPHRAIM EVANGELIQUE": "EP",
+    "CS EVENGELIQUE HOREB": "HO",
+    "CS FAMILLE MILITAIRE": "FA",
+    "CS GASSI": "GA",
+    "CS GUELMATE": "GU",
+    "CS HARANGADJI": "HA",
+    "CS ISHANE": "IS",
+    "CS KILWITI": "KI",
+    "CS LA COLOMBE": "LC",
+    "CS LEPROSERIE": "LE",
+    "CS MANDJAFA (NDJAMENA-SUD)": "MA",
+    "CS NAGA AL-GADEM": "NA",
+    "CS ORDRE DE MALTE AMTOU": "OM",
+    "CS ORHAN TOPAL": "OT"
+  },
+
+  "microplan_targets": {
+    "CS ABENA": 19040,
+    "CS AL-MANSOUR": 4131,
+    "CS AMBATTA 1": 7903,
+    "CS AMBATTA 2": 7309,
+    "CS AMBATTA 3 EDEN": 7505,
+    "CS AMBATTA 4 LA ROSEE": 10951,
+    "CS ATRONE": 27241,
+    "CS BOUTALBAGARA 1": 9696,
+    "CS BOUTALBAGARA 2": 12255,
+    "CS BOUTALBAGARA 3": 11059,
+    "CS BOUTALBAGARA HENRY": 10137,
+    "CS CEPHAS": 912,
+    "CS DIGO": 4638,
+    "CS EPHRAIM EVANGELIQUE": 4202,
+    "CS EVENGELIQUE HOREB": 1333,
+    "CS FAMILLE MILITAIRE": 3531,
+    "CS GASSI": 2495,
+    "CS GUELMATE": 6680,
+    "CS HARANGADJI": 13024,
+    "CS ISHANE": 10001,
+    "CS KILWITI": 4408,
+    "CS LA COLOMBE": 3397,
+    "CS LEPROSERIE": 10683,
+    "CS MANDJAFA (NDJAMENA-SUD)": 5249,
+    "CS NAGA AL-GADEM": 3867,
+    "CS ORDRE DE MALTE AMTOU": 12913,
+    "CS ORHAN TOPAL": 13596
+  }
+}
