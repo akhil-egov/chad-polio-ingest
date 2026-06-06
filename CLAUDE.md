@@ -67,3 +67,19 @@ For now: ingest writes Excel → dashboard reads it directly (transform step is 
 - Connect to the dashboard repo
 - Process or aggregate data beyond what's needed for the Excel columns in CONTRACT.md
 - Hardcode campaign IDs, index names, or credentials
+
+---
+
+## Agent skills
+
+### Issue tracker
+
+GitHub Issues at `akhil-egov/chad-polio-ingest`. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Default five-state workflow (`needs-triage` → `needs-info` / `ready-for-agent` / `ready-for-human` / `wontfix`). See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: `CLAUDE.md` + `CONTRACT.md` at repo root (no separate `CONTEXT.md`). See `docs/agents/domain.md`.
