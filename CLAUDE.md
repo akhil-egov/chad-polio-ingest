@@ -20,11 +20,11 @@ The goal is correct code, not literal compliance.
 This repo is the **data extraction layer only**. It pulls from Elasticsearch and writes Excel files.  
 It does NOT process, transform, or visualise data. It does NOT connect to the dashboard.
 
-## Three-repo pipeline
+## Two-repo pipeline
 ```
-[chad-polio-ingest]  →  Excel file  →  [chad-polio-transform (future)]  →  [chad-polio-dashboard]
+[chad-polio-ingest]  →  Excel file  →  [chad-polio-dashboard]
 ```
-For now: ingest writes Excel → dashboard reads it directly (transform step is manual).
+Ingest writes Excel → dashboard reads it directly. No transform step.
 
 ## Data contract
 `CONTRACT.md` in this repo defines the exact Excel schema both this repo and the dashboard depend on.  
@@ -112,7 +112,9 @@ Credentials in `.env` (gitignored): `ES_URL`, `ES_AUTH_HEADER`, `JUPYTER_BASE`, 
 ### Workflow for extractor changes
 1. Edit extractor locally
 2. `python3 deploy.py extractors/<file>.py`
-3. From `chad-polio-dashboard/`: `python3 run_pipeline.py` to trigger + fetch
+3. From `~/chad-polio-dashboard/`: `python3 run_pipeline.py` to trigger extraction + download + push to Vercel
+
+**Note:** All automation scripts (`run_pipeline.py`, `fetch_latest.py`, `setup_cron.py`) live in the **dashboard repo root**, not here.
 
 ### Extractor pattern
 All extractors are plain modules (no class inheritance) with:

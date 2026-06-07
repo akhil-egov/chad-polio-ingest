@@ -44,9 +44,13 @@ Per-user activity and sync status.
 |--------|------|-------|
 | `user_id` | string | |
 | `user_name` | string | |
+| `region` | string\|null | From `Data.boundaryHierarchy.region` |
+| `district` | string\|null | From `Data.boundaryHierarchy.district` |
+| `team_name` | string | Prefix of `user_name` before last hyphen — e.g. `BO2-11` → `BO2` |
 | `facility_name` | string | |
 | `facility_id` | string | |
 | `date` | YYYY-MM-DD | |
+| `day_number` | int | Campaign day, 1-indexed from earliest date in the dataset |
 | `task_count` | int | Tasks completed that day |
 | `last_sync` | ISO datetime | Most recent sync timestamp |
 | `is_inactive` | bool | True if no sync in last 24h |
@@ -93,6 +97,25 @@ Vial reconciliation by facility. **Supply-side only** — no dose estimates.
 
 ---
 
+### `stock_daily`
+Per-team per-day vial issuance. One row per `POLIO_STOCK_ISSUED` record in the user action index.
+
+**Note:** lat/lng intentionally excluded — coordinates in `chad-user-action-location-capture-index-v1` have a known India offset bug and are unreliable.
+**Note:** filtered to `Data.additionalDetails.form = POLIO_STOCK_ISSUED` only.
+
+| Column | Type | Notes |
+|--------|------|-------|
+| `user_name` | string\|null | Team code — from `Data.userName` |
+| `name_of_user` | string\|null | Human name — from `Data.nameOfUser` |
+| `facility_name` | string\|null | From `Data.boundaryHierarchy.healthFacility` |
+| `facility_id` | string\|null | 2-letter prefix from config |
+| `district` | string\|null | From `Data.boundaryHierarchy.district` |
+| `region` | string\|null | From `Data.boundaryHierarchy.region` |
+| `date` | YYYY-MM-DD | From `Data.syncedDate` |
+| `vials_received` | int | From `Data.additionalDetails.totalVialsReceivedForDay`, default 0 |
+
+---
+
 ### `gps`
 Lat/lng for map rendering. GPS-valid records only.
 
@@ -107,6 +130,9 @@ Lat/lng for map rendering. GPS-valid records only.
 | `vaccinated` | bool | For task records |
 | `settlement_type` | string\|null | `URBAN`, `RURAL`, `SLUMS`, `NOMADS_PASTORALISTS` — from `Data.additionalDetails.settlementType` |
 | `settlement_name` | string\|null | Neighbourhood/quartier name — from `Data.boundaryHierarchy.settlement` |
+| `user_name` | string\|null | Team code e.g. `LE-11` — from `Data.userName` |
+| `member_count` | int\|null | Household size — from `Data.additionalDetails.memberCount` |
+| `vaccinated_count` | int\|null | Children with `ADMINISTRATION_SUCCESS` at this location (joined from task index via rounded lat/lng). **Tech debt:** join uses 5dp lat/lng because `householdId` is null on task records. |
 
 ---
 
