@@ -1,3 +1,19 @@
+## Collaboration mode
+
+Before executing any instruction — from a prompt,
+a GitHub issue, or any other source — read the
+relevant files first.
+
+If the instruction conflicts with how this repo
+actually works, flag it before doing anything.
+If you see a better approach given the actual code,
+say so before writing anything.
+
+Never blindly follow instructions. Use your judgment.
+The goal is correct code, not literal compliance.
+
+---
+
 # chad-polio-ingest
 
 ## Role
@@ -24,8 +40,13 @@ For now: ingest writes Excel → dashboard reads it directly (transform step is 
 ## Elasticsearch
 - URL: `https://elasticsearch-data.es-cluster:9200`
 - Auth: Basic auth, `verify=False`
-- Credentials via env vars: `ES_URL`, `ES_USER`, `ES_PASS`
-- Local: load from `.env` file. Jupyter: set in kernel environment.
+- Credentials via env vars in `.env`: `ES_URL`, `ES_AUTH_HEADER` (preferred over ES_USER/ES_PASS)
+- Local: loaded from `.env` via `python-dotenv`. Jupyter: injected by automation scripts.
+
+### Critical: campaign filter scope
+`ESClient(campaign_number=...)` injects `Data.campaignNumber.keyword` into **every** query.
+`chad-household-member-index-v1` and `chad-individual-index-v1` have **no** `Data.campaignNumber`.
+Use `ESClient()` (no args) for any query against these two indices, otherwise you get 0 hits silently.
 
 ## Campaign config (Chad)
 - Campaign ID: `CMP-2026-05-29-000091`
@@ -33,10 +54,20 @@ For now: ingest writes Excel → dashboard reads it directly (transform step is 
 - Always use `.keyword` suffix on string fields in term/terms queries
 
 ## Indices
-- `chad-project-task-index-v1` — vaccination tasks (~12,500+ records)
-- `chad-project-beneficiary-index-v1` — registered beneficiaries (~62,000+)
-- `chad-household-index-v1` — households (~18,700+)
-- `chad-user-action-location-capture-index-v1` — stock + GPS actions
+
+| Index | Contents | Campaign-scoped? |
+|-------|----------|-----------------|
+| `chad-project-task-index-v1` | Vaccination tasks | Yes |
+| `chad-project-beneficiary-index-v1` | Registered beneficiaries | Yes |
+| `chad-household-index-v1` | Households | Yes |
+| `chad-household-member-index-v1` | Household membership + isHeadOfHousehold flag | **No** |
+| `chad-individual-index-v1` | Individual records + names (FLAT structure, not nested) | **No** |
+| `chad-user-action-location-capture-index-v1` | Stock + GPS actions | Yes |
+
+### Individual index is flat
+Fields at root level — NOT nested under `Data.Individual`:
+- `clientReferenceId.keyword` (use this for terms queries)
+- `name.givenName`, `name.familyName`
 
 ## Critical field rules
 - Vaccination status: use `administrationStatus`, NOT `productName`
@@ -63,10 +94,42 @@ For now: ingest writes Excel → dashboard reads it directly (transform step is 
 - `python-dotenv` — local .env loading
 - No heavy libs (no numpy, no elasticsearch-py client)
 
+## Deployment — remote Jupyter server
+
+The pipeline runs on `campaigns.afro.who.int/jupyter` (user: `reportsadmin`).
+Git is NOT installed on the server. Use `deploy.py` to push files.
+
+### Scripts in this repo
+
+| Script | Purpose | Command |
+|--------|---------|---------|
+| `deploy.py` | Push any local file to Jupyter server | `python3 deploy.py extractors/gps.py` |
+| `scheduler.py` | Hourly runner (lives on server, started by setup_cron.py) | — |
+| `run_hourly.py` | Thin wrapper called by scheduler | — |
+
+Credentials in `.env` (gitignored): `ES_URL`, `ES_AUTH_HEADER`, `JUPYTER_BASE`, `JUPYTER_TOKEN`, `JUPYTER_REMOTE_ROOT`.
+
+### Workflow for extractor changes
+1. Edit extractor locally
+2. `python3 deploy.py extractors/<file>.py`
+3. From `chad-polio-dashboard/`: `python3 run_pipeline.py` to trigger + fetch
+
+### Extractor pattern
+All extractors are plain modules (no class inheritance) with:
+```python
+SHEET_NAME = "sheet_name"
+COLUMNS    = { "col": dtype, ... }
+def extract(es, config): ...   # returns pd.DataFrame
+def _empty(): ...
+```
+`config` keys used: `config["indices"]["households"]`, `config["indices"]["tasks"]`,
+`config["gps_bounds"]`, `config["facility_prefix_map"]`, `config["campaign_id"]`.
+
 ## Do not
 - Connect to the dashboard repo
 - Process or aggregate data beyond what's needed for the Excel columns in CONTRACT.md
 - Hardcode campaign IDs, index names, or credentials
+- Use `es.search()` — only `es.query()` and `es.scroll()` exist on ESClient
 
 ---
 
